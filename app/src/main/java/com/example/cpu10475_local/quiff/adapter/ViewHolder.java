@@ -23,4 +23,5 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         txtTime = itemView.findViewById(R.id.txtTime);
         constraint = itemView.findViewById(R.id.constraintLayout);
     }
+
 }

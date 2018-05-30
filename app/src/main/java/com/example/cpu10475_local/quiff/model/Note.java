@@ -1,11 +1,15 @@
 package com.example.cpu10475_local.quiff.model;
 
-public class Note {
+import android.os.PersistableBundle;
+
+import java.io.Serializable;
+
+public class Note  implements Serializable {
     private String titles;
     private String date;
     private String type;
     private String optionalInfo;
-    private int level;
+    private int level = -1;
 
     public Note(String titles, String date, String type, String optionalInfo, int level ) {
         this.titles = titles;
@@ -54,5 +58,26 @@ public class Note {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + titles.hashCode();
+        result = 31 * result + type.hashCode();
+        result = 31 * result + date.hashCode();
+        result = 31 * result + optionalInfo.hashCode();
+        result = 31 * result + level;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (obj == this)
+           return true;
+       if(!(obj instanceof Note))
+           return false;
+       Note note = (Note) obj;
+       return note.getTitles().equals(titles);
     }
 }

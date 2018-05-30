@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        Note temp = data.get(position);
+        final Note temp = data.get(position);
 
         if(temp.getType().equals("eat"))
             holder.imgType.setImageBitmap(DataManager.getInstance().bitmaps[2]);
@@ -72,16 +73,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
             holder.txtTime.setTextColor(Color.parseColor("#32CD32"));
         }
         final View shareView = holder.constraint;
-        shareView.setTransitionName(temp.getTitles());
+        shareView.setTransitionName(holder.txtTitle.getText().toString());
+           // Toast.makeText(DataManager.getInstance().context,holder.txtTitle.getText().toString(),Toast.LENGTH_SHORT).show();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(DataManager.getInstance().context, DetailActivity.class);
+                intent.putExtra("position",holder.getAdapterPosition());
+                intent.putExtra("transition",ViewCompat.getTransitionName(shareView));
+                intent.putExtra("title",temp.getTitles());
+                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((Activity) DataManager.getInstance().context,shareView,ViewCompat.getTransitionName(shareView));
 
-
-                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((Activity) DataManager.getInstance().context,shareView,shareView.getTransitionName());
-                intent.putExtra("position",position);
-                intent.putExtra("transition",shareView.getTransitionName());
                 DataManager.getInstance().context.startActivity(intent,activityOptions.toBundle());
             }
         });

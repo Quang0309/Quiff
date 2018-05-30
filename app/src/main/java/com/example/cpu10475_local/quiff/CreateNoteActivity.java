@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.cpu10475_local.quiff.adapter.PaperAdapter;
+import com.example.cpu10475_local.quiff.model.Note;
 
 public class CreateNoteActivity extends AppCompatActivity {
     ViewPager viewPager;
@@ -15,7 +16,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     LinearLayout dotsLayout;
     int[] layouts;
     TextView[] dots;
-
+    Note note;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +31,8 @@ public class CreateNoteActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         dotsLayout = findViewById(R.id.dotsLayout);
         addBottomDots(0);
-        paperAdapter = new PaperAdapter(layouts,this);
+        note = (Note) getIntent().getSerializableExtra("note");
+        paperAdapter = new PaperAdapter(layouts,this, note);
         viewPager.setAdapter(paperAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
