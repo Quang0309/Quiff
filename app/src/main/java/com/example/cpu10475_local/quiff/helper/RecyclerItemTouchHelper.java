@@ -37,6 +37,7 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
         WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
         lp.dimAmount=0.2f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
         dialog.getWindow().setAttributes(lp);
+
         dialog.show();
         final int index = viewHolder.getAdapterPosition();
 
@@ -61,7 +62,7 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
                 DataManager.getInstance().notes.add(index,temp);
                 recyclerView.getAdapter().notifyItemInserted(index);
                 dialog.dismiss();
-                return;
+
             }
         });
 

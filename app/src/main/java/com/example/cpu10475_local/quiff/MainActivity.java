@@ -1,8 +1,8 @@
 package com.example.cpu10475_local.quiff;
 
-import android.app.SharedElementCallback;
+
 import android.content.Intent;
-import android.media.browse.MediaBrowser;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,31 +11,31 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.Toast;
+
 
 import com.example.cpu10475_local.quiff.adapter.RecyclerAdapter;
-import com.example.cpu10475_local.quiff.adapter.ViewHolder;
+
 import com.example.cpu10475_local.quiff.helper.RecyclerItemTouchHelper;
 import com.example.cpu10475_local.quiff.model.DataManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
-    DataManager manager;
+
     RecyclerView recyclerView;
     FloatingActionButton btnAdd;
     SwipeRefreshLayout refreshLayout;
     RecyclerItemTouchHelper recyclerItemTouchHelper;
+    RecyclerAdapter recyclerAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        manager.getInstance().init(this);
+      /*  if(DataManager.getInstance().bitmaps==null)*/
+        DataManager.getInstance().init(this);
         init();
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,10 +54,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        recyclerAdapter = new RecyclerAdapter(this);
         recyclerView =findViewById(R.id.recyclerMainAc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new RecyclerAdapter());
+        recyclerView.setAdapter(recyclerAdapter);
         btnAdd = findViewById(R.id.floatingActionButton);
         refreshLayout = findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -78,7 +79,24 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.getAdapter().notifyDataSetChanged();
             DataManager.getInstance().numItem = DataManager.getInstance().notes.size();
         }
+        else
+        {
+            if(recyclerAdapter.index!=-1) {
+                recyclerView.getAdapter().notifyItemChanged(recyclerAdapter.index);
+                recyclerAdapter.index=-1;
+            }
+        }
+
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataManager.getInstance().context = null;
+
+    }
+
+
 
 
 }

@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,10 +21,24 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateNoteActivity" />
-        <activity android:name=".DetailActivity"></activity>
-        <service android:name=".service.Notification"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
+        <activity
+            android:name=".DetailActivity"
+            android:launchMode="singleTop" />
+
+        <service
+            android:name=".service.Notification"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name=".AppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

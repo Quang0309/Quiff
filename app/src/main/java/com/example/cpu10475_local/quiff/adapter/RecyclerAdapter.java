@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +24,13 @@ import java.util.zip.Inflater;
 public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     ArrayList<Note> data = DataManager.getInstance().notes;
     String dateTime[];
+    public int index = -1;
+    Activity activity;
+
+    public RecyclerAdapter(Activity activity) {
+        this.activity = activity;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -78,14 +86,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                index = position;
                 Intent intent = new Intent(DataManager.getInstance().context, DetailActivity.class);
-                intent.putExtra("position",holder.getAdapterPosition());
+                intent.putExtra("hashcode",temp.hashCode());
                 intent.putExtra("transition",ViewCompat.getTransitionName(shareView));
                 intent.putExtra("title",temp.getTitles());
-                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((Activity) DataManager.getInstance().context,shareView,ViewCompat.getTransitionName(shareView));
-
-                DataManager.getInstance().context.startActivity(intent,activityOptions.toBundle());
+                ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,shareView,shareView.getTransitionName());
+                try {
+                    DataManager.getInstance().context.startActivity(intent, activityOptionsCompat.toBundle());
+                }catch (IllegalArgumentException exception)
+                {
+                    DataManager.getInstance().context.startActivity(intent);
+                }
             }
         });
     }

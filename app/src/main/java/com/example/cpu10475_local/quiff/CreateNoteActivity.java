@@ -7,33 +7,39 @@ import android.text.Html;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.cpu10475_local.quiff.adapter.PaperAdapter;
+import com.example.cpu10475_local.quiff.adapter.CustomFragmentPagerAdapter;
+
 import com.example.cpu10475_local.quiff.model.Note;
 
 public class CreateNoteActivity extends AppCompatActivity {
     ViewPager viewPager;
-    PaperAdapter paperAdapter;
+    //PaperAdapter paperAdapter;
     LinearLayout dotsLayout;
-    int[] layouts;
+  //  int[] layouts;
     TextView[] dots;
     Note note;
+    boolean isEdit = false;
+    private static final String keyNote = "keyNote";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createnote);
         init();
-
+        if(savedInstanceState!=null)
+            note = (Note) savedInstanceState.getSerializable(keyNote);
     }
 
     private void init() {
-        layouts = new int[]{R.layout.layout_add1,R.layout.layout_add2,R.layout.layout_add3};
+        //layouts = new int[]{R.layout.layout_add1,R.layout.layout_add2,R.layout.layout_add3};
 
         viewPager = findViewById(R.id.viewPager);
         dotsLayout = findViewById(R.id.dotsLayout);
         addBottomDots(0);
         note = (Note) getIntent().getSerializableExtra("note");
-        paperAdapter = new PaperAdapter(layouts,this, note);
-        viewPager.setAdapter(paperAdapter);
+        if(note!=null)
+            isEdit = true;
+       // paperAdapter = new PaperAdapter(layouts,this, note);
+        viewPager.setAdapter(new CustomFragmentPagerAdapter(getSupportFragmentManager()));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -54,7 +60,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void addBottomDots(int currentPage) {
-        dots = new TextView[layouts.length];
+        dots = new TextView[3];
 
         int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
         int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
@@ -72,4 +78,31 @@ public class CreateNoteActivity extends AppCompatActivity {
             dots[currentPage].setTextColor(colorsActive[currentPage]);
     }
 
+    public Note getNote() {
+        return note;
+    }
+    public void setNote(Note note)
+    {
+        this.note = note;
+    }
+    public boolean isEdit()
+    {
+        return isEdit;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(keyNote,note);
+    }
+    @Override
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() ==0)
+            super.onBackPressed();
+        else if(viewPager.getCurrentItem()==1)
+            viewPager.setCurrentItem(0);
+        else if(viewPager.getCurrentItem()==2)
+            viewPager.setCurrentItem(1);
+
+    }
 }

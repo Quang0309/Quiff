@@ -37,13 +37,14 @@ public class DataManager {
         mDatabase = new NoteBaseHelper(context.getApplicationContext()).getWritableDatabase();
         notes = (ArrayList<Note>) getNotes();
         this.context = context;
-        bitmaps = new Bitmap[4];
+        bitmaps = new Bitmap[5];
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inSampleSize = 2;
         BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.business, options);
         BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.study, options);
         BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.eat, options);
+        BitmapFactory.decodeResource(context.getApplicationContext().getResources(),R.drawable.free,options);
         options.inSampleSize=2;
         BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.doctor, options);
         options.inJustDecodeBounds=false;
@@ -51,6 +52,7 @@ public class DataManager {
         bitmaps[1] = BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.study, options);
         bitmaps[2] =  BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.eat, options);
         bitmaps[3] = BitmapFactory.decodeResource(context.getApplicationContext().getResources(), R.drawable.doctor, options);
+        bitmaps[4] = BitmapFactory.decodeResource(context.getApplicationContext().getResources(),R.drawable.free,options);
         numItem = notes.size();
 //        Log.e("Title",notes.get(0).getTitles());
     }
@@ -141,7 +143,7 @@ public class DataManager {
         ArrayList<JobInfo> pendingJobs= (ArrayList<JobInfo>) jobScheduler.getAllPendingJobs();
         for(int i=0;i<pendingJobs.size();i++)
         {
-            if(notes.indexOf(note) == pendingJobs.get(i).getId())
+            if(note.hashCode() == pendingJobs.get(i).getId())
             {
                 jobScheduler.cancel(pendingJobs.get(i).getId());
                 jobScheduler.cancel(pendingJobs.get(i).getId()*-1);
@@ -152,13 +154,13 @@ public class DataManager {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy");
         Date date = new Date();
         String temp = dateFormat.format(date);
-        long targetDate = convertDate(note.getDate());
+        long targetDate = convertDate(note.getDate())+6*60*60*1000;
         long curDate = convertDate(temp);
         if(targetDate-curDate<=0)
             return true;
         return false;
     }
-    public  long convertDate(String Date) {
+    public long convertDate(String Date) {
         String dateTime[] = Date.split(" ");
         String date[] = dateTime[1].split("-");
         String time[] = dateTime[0].split(":");

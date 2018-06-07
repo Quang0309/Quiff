@@ -22,6 +22,7 @@ public class DetailActivity extends AppCompatActivity {
     TextView txtTitle,txtDate,txtLevel,txtNote,txtBrand;
     ConstraintLayout constraintLayout;
     ImageButton btnEdit;
+    boolean isNoti = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +42,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void init() {
-        if(DataManager.getInstance().notes==null)
+        if(DataManager.getInstance().notes==null) {
             DataManager.getInstance().init(this);
+            isNoti = true;
+        }
         constraintLayout = findViewById(R.id.constraintLayoutDetail);
         txtTitle = findViewById(R.id.txtTitleLayoutDetail);
         txtDate = findViewById(R.id.txtDateLayoutDetail);
@@ -63,25 +66,41 @@ public class DetailActivity extends AppCompatActivity {
         {
             Toast.makeText(this,"The note was deleted.",Toast.LENGTH_LONG).show();
             finish();
-            Intent intent = new Intent(DetailActivity.this,MainActivity.class);
-            startActivity(intent);
+            if(isNoti) {
+                Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
             return;
         }
-        note = DataManager.getInstance().notes.get(getIntent().getIntExtra("position",0));
-        if(!note.getTitles().equals(getIntent().getStringExtra("title")))
+        int hashCode = getIntent().getIntExtra("hashcode",0);
+
+        for(int i=0;i<DataManager.getInstance().notes.size();i++)
+        {
+
+
+            if(hashCode==DataManager.getInstance().notes.get(i).hashCode())
+            {
+
+                note = DataManager.getInstance().notes.get(i);
+                break;
+            }
+        }
+        if(note==null)
         {
             Toast.makeText(this,"The note was deleted.",Toast.LENGTH_LONG).show();
             finish();
-            Intent intent = new Intent(DetailActivity.this,MainActivity.class);
-            startActivity(intent);
+            if(isNoti) {
+                Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
             return;
         }
         //Toast.makeText(this,Integer.toString(DataManager.getInstance().notes.indexOf(note)),Toast.LENGTH_SHORT).show();
         constraintLayout.setTransitionName(getIntent().getStringExtra("transition"));
-        if(getIntent().getStringExtra("transition")==null)
+     /*   if(getIntent().getStringExtra("transition")==null)
             Log.e("transition name","null");
         else
-            Log.e("transition name",constraintLayout.getTransitionName());
+            Log.e("transition name",constraintLayout.getTransitionName());*/
         txtTitle.setText(note.getTitles());
         txtDate.setText(note.getDate());
         if(note.getLevel()==0) {
@@ -105,8 +124,5 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        ActivityCompat.finishAfterTransition(this);
-    }
+
 }

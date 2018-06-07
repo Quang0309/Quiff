@@ -6,11 +6,13 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.graphics.drawable.ScaleDrawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.cpu10475_local.quiff.DetailActivity;
 import com.example.cpu10475_local.quiff.R;
@@ -38,22 +40,30 @@ public class Notification extends JobService {
         if(note.getType().equals("business")) {
 
             builder.setSmallIcon(R.drawable.ic_stat_name);
+            builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.business));
         }
-        else if (note.getType().equals("eat"))
-
+        else if (note.getType().equals("eat")) {
             builder.setSmallIcon(R.drawable.ic_);
-        else if(note.getType().equals("study"))
+            builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.eat));
+        }
+        else if(note.getType().equals("study")) {
             builder.setSmallIcon(R.drawable.ic_study);
-        else
+            builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.study));
+        }
+        else {
             builder.setSmallIcon(R.drawable.ic_doctor);
+            builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.doctor));
+        }
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("position",params.getExtras().getInt("position"));
+        intent.putExtra("hashcode",params.getExtras().getInt("hashcode"));
+
+
         intent.putExtra("title",params.getExtras().getString("title"));
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         android.app.Notification notification = builder.build();
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(params.getExtras().getInt("position"),notification);
+        manager.notify(params.getExtras().getInt("hashcode"),notification);
         jobFinished(params,false);
         return true;
     }
